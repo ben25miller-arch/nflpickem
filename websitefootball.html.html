@@ -248,9 +248,8 @@
 
     <!-- Firebase SDKs -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, addDoc, setDoc, onSnapshot, collection, query, getDocs, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+       import { initializeApp } from "firebase/app";
+       import { getAnalytics } from "firebase/analytics";
 
         // IMPORTANT: REPLACE THE FOLLOWING PLACEHOLDER VALUES WITH YOUR OWN FIREBASE CONFIGURATION
         // YOU MUST CREATE A FIREBASE PROJECT AND ENABLE FIRESTORE TO GET THESE VALUES.
@@ -265,7 +264,8 @@
   };
         
         // You can change this ID, but all league members must use the same one.
-        const appId = "ball-knowers-league-2025";
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
         
         // Change this password to control admin access.
         const ADMIN_PASSWORD = "NFL2025";
@@ -913,6 +913,7 @@
     </script>
 </body>
 </html>
+
 
 
 
