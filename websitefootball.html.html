@@ -249,13 +249,25 @@
     <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, addDoc, setDoc, onSnapshot, collection, query, getDocs, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Global variables provided by the Canvas environment
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // IMPORTANT: REPLACE THE FOLLOWING PLACEHOLDER VALUES WITH YOUR OWN FIREBASE CONFIGURATION
+        // YOU MUST CREATE A FIREBASE PROJECT AND ENABLE FIRESTORE TO GET THESE VALUES.
+        const firebaseConfig = {
+    apiKey: "AIzaSyDAxDoQnlgyfrvvKqLzoR4v58Al6DHSzm0",
+    authDomain: "nfl-pick-em-99806.firebaseapp.com",
+    projectId: "nfl-pick-em-99806",
+    storageBucket: "nfl-pick-em-99806.appspot.com",
+    messagingSenderId: "1063467672687",
+    appId: "1:1063467672687:web:331665b1a8beeecb97d99a",
+  };
+        
+        // You can change this ID, but all league members must use the same one.
+        const appId = "ball-knowers-league-2025";
+        
+        // Change this password to control admin access.
+        const ADMIN_PASSWORD = "NFL2025";
 
         let db, auth;
         let playersData = {};
@@ -313,16 +325,17 @@
         // Initialize Firebase
         function initFirebase() {
             try {
-                if (Object.keys(firebaseConfig).length > 0) {
-                    const app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
-                    setLogLevel('debug'); // Enable Firestore debug logging
-                    handleAuthentication();
-                } else {
-                    showMessage("Error", "Firebase configuration is missing. Please check the environment setup.");
+                if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "YOUR_API_KEY") {
+                    showMessage("Configuration Error", "Please update the firebaseConfig object in the code with your own project's credentials.");
                     loadingSpinner.style.display = 'none';
+                    return;
                 }
+                
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                setLogLevel('debug'); // Enable Firestore debug logging
+                handleAuthentication();
             } catch (error) {
                 console.error("Firebase initialization failed:", error);
                 showMessage("Error", "Failed to initialize Firebase. Please try again.");
@@ -332,18 +345,9 @@
 
         // Handle Firebase authentication
         async function handleAuthentication() {
+            await signInAnonymously(auth);
+            
             onAuthStateChanged(auth, async (user) => {
-                if (initialAuthToken) {
-                    try {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                    } catch (error) {
-                        console.error("Custom token sign-in failed:", error);
-                        await signInAnonymously(auth);
-                    }
-                } else {
-                    await signInAnonymously(auth);
-                }
-                
                 loadingSpinner.style.display = 'none';
                 isAuthReady = true;
 
@@ -812,7 +816,7 @@
         adminLoginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const enteredPassword = adminPasswordInput.value;
-            if (enteredPassword === "NFL2025") {
+            if (enteredPassword === ADMIN_PASSWORD) {
                 isPasswordCorrect = true;
                 passwordForm.classList.add('hidden');
                 adminFeatures.classList.remove('hidden');
@@ -908,3 +912,4 @@
     </script>
 </body>
 </html>
+
